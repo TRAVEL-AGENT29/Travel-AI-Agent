@@ -1,0 +1,216 @@
+import streamlit as st
+
+st.set_page_config(
+    page_title="Travel AI Agent",
+    page_icon="✈️",
+    layout="wide"
+)
+
+st.title("✈️ Travel AI Agent")
+st.write("Plan your perfect trip with destination-specific places!")
+
+st.divider()
+
+# User details
+start = st.text_input("📍 Starting City", "Mehsana")
+
+destination = st.selectbox(
+    "🌍 Select Destination",
+    [
+        "Somnath",
+        "Dwarka",
+        "Statue of Unity",
+        "Ahmedabad",
+        "Kutch",
+        "Gir National Park",
+        "Junagadh",
+        "Surat",
+        "Vadodara"
+    ]
+)
+
+days = st.number_input(
+    "🗓️ Number of Days",
+    min_value=1,
+    max_value=10,
+    value=3
+)
+
+people = st.number_input(
+    "👨‍👩‍👧 Number of People",
+    min_value=1,
+    max_value=20,
+    value=2
+)
+
+budget = st.number_input(
+    "💰 Total Budget (₹)",
+    min_value=500,
+    max_value=500000,
+    value=5000,
+    step=500
+)
+
+# Destination-specific places
+places = {
+    "Somnath": [
+        "Somnath Temple",
+        "Triveni Sangam",
+        "Bhalka Tirth",
+        "Somnath Beach",
+        "Prabhas Patan Museum"
+    ],
+
+    "Dwarka": [
+        "Dwarkadhish Temple",
+        "Gomti Ghat",
+        "Sudama Setu",
+        "Rukmini Devi Temple",
+        "Nageshwar Jyotirlinga"
+    ],
+
+    "Statue of Unity": [
+        "Statue of Unity",
+        "Valley of Flowers",
+        "Sardar Sarovar Dam Viewpoint",
+        "Jungle Safari",
+        "Ekta Nagar"
+    ],
+
+    "Ahmedabad": [
+        "Sabarmati Ashram",
+        "Sabarmati Riverfront",
+        "Kankaria Lake",
+        "Adalaj Stepwell",
+        "Science City"
+    ],
+
+    "Kutch": [
+        "White Rann of Kutch",
+        "Kala Dungar",
+        "Bhuj",
+        "Aina Mahal",
+        "Mandvi Beach"
+    ],
+
+    "Gir National Park": [
+        "Gir National Park",
+        "Devalia Safari Park",
+        "Sasan Gir",
+        "Kankai Temple"
+    ],
+
+    "Junagadh": [
+        "Uparkot Fort",
+        "Girnar Hills",
+        "Mahabat Maqbara",
+        "Ashoka Rock Edicts",
+        "Damodar Kund"
+    ],
+
+    "Surat": [
+        "Dumas Beach",
+        "Dutch Garden",
+        "Science Centre",
+        "Sarthana Nature Park",
+        "Gopi Talav"
+    ],
+
+    "Vadodara": [
+        "Laxmi Vilas Palace",
+        "Sayaji Garden",
+        "Baroda Museum",
+        "Kirti Mandir",
+        "Sursagar Lake"
+    ]
+}
+
+if st.button("✨ Generate My Travel Plan"):
+
+    if not start.strip():
+        st.error("Please enter your starting city.")
+
+    else:
+        st.success(f"Your trip to {destination} is ready to plan!")
+
+        st.subheader("🗺️ Your Destination")
+
+        st.write(f"**Starting City:** {start}")
+        st.write(f"**Destination:** {destination}")
+        st.write(f"**Duration:** {days} days")
+        st.write(f"**Travellers:** {people} people")
+
+        # Daily budget
+        st.subheader("💰 Budget Details")
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric("Total Budget", f"₹{budget:,}")
+        col2.metric("Per Person", f"₹{budget / people:,.0f}")
+        col3.metric("Per Day", f"₹{budget / days:,.0f}")
+
+        # Day-wise itinerary
+        st.subheader("📅 Day-wise Travel Itinerary")
+
+        destination_places = places[destination]
+
+        for day in range(1, int(days) + 1):
+
+            st.markdown(f"### Day {day}")
+
+            if day == 1:
+                st.write(f"Travel from {start} to {destination}.")
+                st.write(
+                    f"Explore {destination_places[0]} "
+                    "and nearby attractions."
+                )
+
+            else:
+                place_index = (day - 1) % len(destination_places)
+
+                st.write(
+                    f"Visit {destination_places[place_index]}."
+                )
+
+                if len(destination_places) > 1:
+                    next_index = day % len(destination_places)
+
+                    if next_index != place_index:
+                        st.write(
+                            f"Also explore {destination_places[next_index]}."
+                        )
+
+        # Hotel suggestions
+        st.subheader("🏨 Hotel Search")
+
+        st.write(
+            f"Search for budget hotels in {destination}. "
+            "Compare location, reviews and prices before booking."
+        )
+
+        hotel_url = (
+            "https://www.google.com/maps/search/?api=1&query="
+            + (destination + " budget hotels").replace(" ", "+")
+        )
+
+        st.link_button("Find Hotels", hotel_url)
+
+        # Google Maps
+        st.subheader("📍 Explore on Google Maps")
+
+        map_url = (
+            "https://www.google.com/maps/search/?api=1&query="
+            + destination.replace(" ", "+")
+        )
+
+        st.link_button("Open Destination Map", map_url)
+
+        st.info(
+            "Note: This is a suggested itinerary. "
+            "Check opening hours, travel distances, "
+            "transport options and current prices before travelling."
+        )
+
+st.divider()
+
+st.caption("Travel AI Agent | Gujarat Tourism Planner")
